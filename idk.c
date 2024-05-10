@@ -148,7 +148,10 @@ void setup_ip_header(struct iphdr *iph)
  
 void setup_tcp_header(struct tcphdr *tcph)
 {
-    tcph->source = htons(sourceports); 
+	int random_index = randnum(0, sizeof(sourceports) / sizeof(sourceports[0]) - 1);
+    int random_port = sourceports[random_index];
+
+    tcph->source = htons(random_port); 
     tcph->seq = 0;
     tcph->ack_seq = 1;
     tcph->res2 = 0;
